@@ -2,13 +2,11 @@ package com.gggorock.urlshortener.dto;
 
 import com.gggorock.urlshortener.domain.Url;
 
-public class AccessCountDto {
-    private final int index;
+public class UrlAccessCountOut {
     private final String originUrl;
     private final Long accessCount;
 
-    public AccessCountDto(int index, String originUrl, Long accessCount) {
-        this.index = index;
+    public UrlAccessCountOut(String originUrl, Long accessCount) {
         this.originUrl = originUrl;
         this.accessCount = accessCount;
     }
@@ -19,10 +17,10 @@ public class AccessCountDto {
         return accessCount;
     }
 
-    public static AccessCountDto from(int index, Url url) {
+    public static UrlAccessCountOut from(Url url) {
         String originUrl = url.getOriginUrl();
         Long requestCount = url.getRequestCount();
-        return new AccessCountDto(index, originUrl, requestCount);
+        return new UrlAccessCountOut(originUrl, requestCount);
     }
 
 }
