@@ -2,6 +2,88 @@
 
 
 
+# **221126 변경사항**
+
+![image-20221126110832283](./image/README/image-20221126110832283.png)
+
+## Sequence라는 상태값에 의존하지 않는 Random키구현 방식으로 변경
+
+1. 기존 index를 기준으로 하는 경우 무상태성을 보장하지 못하여 ScaleOut이 어려워지고, 불필요한 db조회가 발생할수있어 Random한 형태로 변경
+
+2. shortenUrl 도메인객체의 키값정책에 따라 키를 생성하여 객체를 생성하는 ShortenUrlFactory를 인터페이스화하여 확장
+
+   ShortenUrlFactory : class -> Interface
+
+   SequenceShortenUrlFactory : 기존 ShortenUrlFactory
+
+   RandomShortenUrlFactory : 랜덤값 기준으로 URL생성하는 Factory구현
+
+   
+
+## 예외처리 개선
+
+1. 의미를 구체화한 UncheckedException 확장 (NotExistingUrlException)
+2. 전역예외처리핸들러 구현
+
+
+
+## 테스트코드 작성 및 개선
+
+1. 단위테스트를 위한 Mocking사용
+
+2. MockMvc를 이용한 Controller 테스트
+
+### 	해결했던부분
+
+   - **MockMvc UTF-8인코딩문제**  
+     - 원인 : spring에서는 자동으로 utf-8인코딩을 하지만, mockMvc는지원하지 않아 한글예외메시지를 올바로 표시해주지 않음.
+     
+     - 해결 
+     
+       - MockMvcBuilder를 통해 filter로 utf-8인코딩되도록 변경
+     
+       - mockMvc가 자동주입되므로 주입된 이후에 초기화를 위하여 빈생성주기를 고려하여 @PostConstruct를 이용하여 초기화 콜백
+
+   ``` java
+       @PostConstruct
+       void init() {
+           mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                   .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                   .build();
+       }
+   ```
+
+   - **MockMvc 로 요청확인시 ResponseBody에 null값이 뜨는 문제**
+     - 원인 : mock stubbing시에 dto를 만들어 값을 반환하도록 하였으나, mockMvc는 String으로 만든 값을 기준으로 하기때문에 동등비교를 위한 equals가 정의되어있어야함.
+     - 해결 : ShortenUrlCreatRequestDto에 equals를 구현함으로써 해결.
+
+   ``` 
+   java.lang.AssertionError: Response content expected:<{"shortenUrl":"/aewiopfj"}> but was:<{"shortenUrl":null}>
+   Expected :{"shortenUrl":"/aewiopfj"}
+   Actual   :{"shortenUrl":null}
+   ```
+
+
+
+
+## 패키지 및 네이밍 가독성을 위한 변경
+
+ 	1. 클래스가 늘어남에 따라 캡슐화를 위해서 package-private로 되어있던 클래스들을 public으로 변경후 view를 담당할 presentation, 비즈니스로직을 담당할 application, domain을 담당할 domain, db접근을 위한 infrastructure로 나눔
+     - **생각해본점**
+       - 가독성 vs 캡슐화
+
+         - 한 프로젝트에 여러 service가 존재한다면, public으로 해두었을 시 각 aggregate간 캡슐화가 떨어지지 않을까?
+
+         - aop적용하려면 프록시를 만들기 위해 어쩔수 없이 public으로 만들어야 하지 않을까
+
+         - 하위패키지까지 포함하는 접근제어자가 있으면 좋겠다.
+
+2. Url 도메인객체의 이름을 shortenUrl로 변경
+   - shortenUrl을 위한 도메인객체로 좀더 명확한 이름 사용 url은 URI와 같은 기타 라이브러리와 겹칠가능성있음. 
+3. UrlShorteningService의 이름을 shortenUrlService로 통일성 있게 변경
+
+
+
 -------
 
 # **221102 변경사항**

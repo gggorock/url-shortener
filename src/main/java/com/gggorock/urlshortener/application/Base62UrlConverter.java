@@ -1,7 +1,8 @@
-package com.gggorock.urlshortener.domain;
+package com.gggorock.urlshortener.application;
 
 import org.springframework.stereotype.Component;
 
+@Component
 public class Base62UrlConverter implements UrlConverter {
     private final char[] BASE62_TABLE = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
