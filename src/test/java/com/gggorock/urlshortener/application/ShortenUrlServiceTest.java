@@ -1,5 +1,6 @@
 package com.gggorock.urlshortener.application;
 
+import com.gggorock.urlshortener.domain.NotExistingUrlException;
 import com.gggorock.urlshortener.domain.ShortenUrl;
 import com.gggorock.urlshortener.infrastructure.ShortenUrlRepository;
 import com.gggorock.urlshortener.presentation.ShortenUrlAccessCountResponseDto;
@@ -82,7 +83,7 @@ class ShortenUrlServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 Url을 입력하면, NPE를 던진다.")
+    @DisplayName("존재하지 않는 Url을 입력하면, NotExistingUrlException를 던진다.")
     void redirect_notExistingUrl_throwNpe() {
         //given
         String notExistingUrl = "awiefjfa";
@@ -91,8 +92,8 @@ class ShortenUrlServiceTest {
         when(shortenUrlRepository.findByShortenUrl(notExistingUrl)).thenReturn(Optional.empty());
 
         //when & then
-        NullPointerException npe = assertThrows(NullPointerException.class, () -> shortenUrlService.redirect(notExistingUrl));
-        assertThat(npe.getMessage()).isEqualTo("생성되지 않은 Url입니다.");
+        assertThrows(NotExistingUrlException.class, () -> shortenUrlService.redirect(notExistingUrl));
+
     }
 
     @Test
@@ -112,8 +113,8 @@ class ShortenUrlServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 Url 접속수를 조회하면, NPE를 던진다.")
-    void getUrlRequestCount_notExistingUrl_throwNpe() {
+    @DisplayName("존재하지 않는 Url 접속수를 조회하면, NotExistingUrlException을 던진다.")
+    void getUrlRequestCount_notExistingUrl_throwNotExistingUrlException() {
         //given
         String notExistingUrl = "awiefjfa";
 
@@ -121,8 +122,7 @@ class ShortenUrlServiceTest {
         when(shortenUrlRepository.findByShortenUrl(notExistingUrl)).thenReturn(Optional.empty());
 
         //then
-        NullPointerException npe = assertThrows(NullPointerException.class, () -> shortenUrlService.getUrlRequestCount(notExistingUrl));
-        assertThat(npe.getMessage()).isEqualTo("생성되지 않은 Url입니다.");
+        assertThrows(NotExistingUrlException.class, () -> shortenUrlService.getUrlRequestCount(notExistingUrl));
 
     }
 

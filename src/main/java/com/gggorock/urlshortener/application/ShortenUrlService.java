@@ -48,7 +48,7 @@ public class ShortenUrlService {
     public ShortenUrlAccessCountResponseDto getUrlRequestCount(String shortenUrl) {
         ShortenUrl url = shortenUrlRepository
                 .findByShortenUrl(shortenUrl)
-                .orElseThrow(()-> new NullPointerException("생성되지 않은 Url입니다."));
+                .orElseThrow(NotExistingUrlException::new);
         return ShortenUrlAccessCountResponseDto.from(url);
     }
 
