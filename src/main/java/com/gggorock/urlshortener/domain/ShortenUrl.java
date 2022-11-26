@@ -2,12 +2,12 @@ package com.gggorock.urlshortener.domain;
 
 import java.util.Objects;
 
-public class Url {
+public class ShortenUrl {
 
     private final String originUrl;
     private final String shortenUrl;
 
-    public Url(String originUrl, String shortenUrl) {
+    public ShortenUrl(String originUrl, String shortenUrl) {
         this.originUrl = originUrl;
         this.shortenUrl = shortenUrl;
     }
@@ -26,7 +26,7 @@ public class Url {
         return requestCount;
     }
 
-    public Url increaseCount() {
+    public ShortenUrl increaseCount() {
         ++this.requestCount;
         return this;
     }
@@ -35,7 +35,7 @@ public class Url {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Url url = (Url) o;
+        ShortenUrl url = (ShortenUrl) o;
         return originUrl.equals(url.originUrl) && shortenUrl.equals(url.shortenUrl);
     }
 

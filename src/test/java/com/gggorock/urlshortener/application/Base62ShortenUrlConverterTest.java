@@ -1,12 +1,14 @@
-package com.gggorock.urlshortener.domain;
+package com.gggorock.urlshortener.application;
 
+import com.gggorock.urlshortener.application.Base62UrlConverter;
+import com.gggorock.urlshortener.application.UrlConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
+class Base62ShortenUrlConverterTest {
 
-class Base62UrlConverterTest {
 
     UrlConverter urlEncoder = new Base62UrlConverter();
 
@@ -21,7 +23,6 @@ class Base62UrlConverterTest {
 
         //then
         assertThat(encodedValue).isEqualTo("B");
-
     }
 
     @Test

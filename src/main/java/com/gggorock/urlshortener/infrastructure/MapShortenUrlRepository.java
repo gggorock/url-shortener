@@ -1,5 +1,6 @@
-package com.gggorock.urlshortener.domain;
+package com.gggorock.urlshortener.infrastructure;
 
+import com.gggorock.urlshortener.domain.ShortenUrl;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,32 +10,37 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-class MapUrlRepository implements UrlRepository {
+class MapShortenUrlRepository implements ShortenUrlRepository {
 
-    private final Map<String, Url> store = new ConcurrentHashMap<>();
+    private final Map<String, ShortenUrl> store = new ConcurrentHashMap<>();
 
     @Override
-    public Url save(Url url) {
+    public ShortenUrl save(ShortenUrl url) {
         String key = url.getShortenUrl();
         store.put(key, url);
         return url;
     }
 
     @Override
-    public Optional<Url> findByShortenUrl(String shortenUrl) {
+    public Optional<ShortenUrl> findByShortenUrl(String shortenUrl) {
         return Optional.ofNullable(store.get(shortenUrl));
     }
 
     @Override
-    public Optional<Url> findByOriginUrl(String originUrl) {
+    public Optional<ShortenUrl> findByOriginUrl(String originUrl) {
         return store.values().stream()
                 .filter(url -> url.getOriginUrl().equals(originUrl))
                 .findAny();
     }
 
     @Override
-    public List<Url> findAll() {
+    public List<ShortenUrl> findAll() {
         return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public void clear() {
+        store.clear();
     }
 
 }

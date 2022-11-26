@@ -1,4 +1,4 @@
-package com.gggorock.urlshortener.domain;
+package com.gggorock.urlshortener.application;
 
 public interface UrlConverter {
 
